@@ -22,7 +22,7 @@ void usageAndExit()
 /*
  * first pass over arguments to check for append flag and get the number of files
  */
-FILE** argCheck(int argc, char *argv[], int* append, int *numFiles)
+void argCheck(int argc, char *argv[], int* append, int *numFiles)
 {
     int i;
 
@@ -41,19 +41,19 @@ FILE** argCheck(int argc, char *argv[], int* append, int *numFiles)
         }
     }
     (*numFiles)++;
-    return malloc(sizeof(FILE*) * (*numFiles));
 }
 
 
 int main(int argc, char *argv[])
 {
     int numFiles = 0, append = 0;
-    FILE** files = argCheck(argc, argv, &append, &numFiles);
+    FILE** files;
 
+    argCheck(argc, argv, &append, &numFiles);
 
-    /* make sure malloc worked, and then open files for writing */
-    if (NULL == files) {
-        perror("realloc error");
+    /* allocate memory for file structures and open the provided files */
+    if (NULL == (files = malloc(sizeof(FILE*) * numFiles))) {
+        perror("malloc error");
         exit(EXIT_FAILURE);
     }
     files[0] = stdout;  /* first output is always stdout */
